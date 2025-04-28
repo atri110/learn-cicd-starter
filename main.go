@@ -11,10 +11,9 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 
 	"github.com/bootdotdev/learn-cicd-starter/internal/database"
-
-	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
 type apiConfig struct {
@@ -27,7 +26,10 @@ var staticFiles embed.FS
 func main() {
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Printf("warning: assuming default configuration. .env unreadable: %v", err)
+		log.Printf(
+			"warning: assuming default configuration. .env unreadable: %v",
+			err,
+		)
 	}
 
 	port := os.Getenv("PORT")
@@ -82,7 +84,10 @@ func main() {
 		v1Router.Post("/users", apiCfg.handlerUsersCreate)
 		v1Router.Get("/users", apiCfg.middlewareAuth(apiCfg.handlerUsersGet))
 		v1Router.Get("/notes", apiCfg.middlewareAuth(apiCfg.handlerNotesGet))
-		v1Router.Post("/notes", apiCfg.middlewareAuth(apiCfg.handlerNotesCreate))
+		v1Router.Post(
+			"/notes",
+			apiCfg.middlewareAuth(apiCfg.handlerNotesCreate),
+		)
 	}
 
 	v1Router.Get("/healthz", handlerReadiness)
