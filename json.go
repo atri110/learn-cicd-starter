@@ -6,7 +6,12 @@ import (
 	"net/http"
 )
 
-func respondWithError(w http.ResponseWriter, code int, msg string, logErr error) {
+func respondWithError(
+	w http.ResponseWriter,
+	code int,
+	msg string,
+	logErr error,
+) {
 	if logErr != nil {
 		log.Println(logErr)
 	}
@@ -30,5 +35,10 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 		return
 	}
 	w.WriteHeader(code)
-	w.Write(dat)
+	_, err = w.Write(dat)
+	if err != nil {
+		log.Printf("Error marshalling JSON: %s", err)
+		w.WriteHeader(500)
+		return
+	}
 }
